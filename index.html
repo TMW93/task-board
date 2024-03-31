@@ -30,23 +30,26 @@
         <div class="modal-content">
           <div class="modal-header">
             <h4 class="modal-title" id="form-title">Add Task</h4>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
           <div class="modal-body">
-            <form>
+            <form id="task-form">
               <!-- task title -->
-              <div class="form-group">
-                <label id="form-task-title">Task Title</label>
-                <input type="text" id="task-title">
+              <div class="form-group mb-3">
+                <label for="task-title">Task Title</label>
+                <input type="text" class="form-control" id="task-title">
               </div>
               <!-- task due date -->
-              <div class="form-group">
-                <label id="form-task-due-date">Task Due Date</label>
-                <input type="text" id="task-due-date">
+              <div class="form-group mb-3">
+                <label for="task-due-date">Task Due Date</label>
+                <input type="text" class="form-control" id="task-due-date">
               </div>
               <!-- task description -->
-              <div class="form-group">
-                <label id="form-task-descript">Task Description</label>
-                <input type="text" id="task-descript">
+              <div class="form-group mb-3">
+                <label for="task-descript" class="col-form-label">Task Description</label>
+                <textarea class="form-control" id="task-descript"></textarea>
               </div>
               <!-- submit button -->
               <button type="submit" id="submit-button">Add Task</button>
