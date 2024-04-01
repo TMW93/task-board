@@ -5,6 +5,9 @@ const taskDescriptInputEl = $(`#task-descript`);
 const toDoEl = $(`#todo-cards`);
 const inProgEl = $(`#in-progress-cards`);
 const doneEl = $(`#done-cards`);
+const toDoBox = $(`#to-do`);
+const inProgBox = $(`#in-progress`);
+const doneBox = $(`#done`);
 
 // Retrieve tasks and nextId from localStorage
 let taskList = JSON.parse(localStorage.getItem("tasks"));
@@ -24,7 +27,7 @@ function generateTaskId() {
 // Todo: create a function to create a task card
 function createTaskCard(task) {
   let cardEl = $(`<div>`);
-  cardEl.addClass(`card`);
+  cardEl.addClass(`card task-card`);
   cardEl.appendTo(toDoEl);
   
   let cardBodyEl = $(`<div>`);
@@ -49,6 +52,26 @@ function createTaskCard(task) {
   let cardDelete = $(`<button>`);
   cardDelete.text(`Delete`);
   cardDelete.appendTo(cardBodyEl);
+
+  $(`.task-card`).draggable({
+    snap: `#todo-cards, #in-progress-cards, #done-cards`,
+    stack: `.task-card`
+  });
+  toDoEl.droppable({
+    drop: function(e, ui) {
+      $(ui.draggable).appendTo(toDoEl);
+    }
+  });
+  inProgEl.droppable({
+    drop: function(e, ui) {
+      $(ui.draggable).appendTo(inProgEl);
+    }
+  });
+  doneEl.droppable({
+    drop: function(e, ui) {
+      $(ui.draggable).appendTo(doneEl);
+    }
+  });
 }
 
 // Todo: create a function to render the task list and make cards draggable
@@ -57,6 +80,8 @@ function renderTaskList() {
   for(task in currentList) {
     createTaskCard(task);
   }
+
+  $(`.card`).draggable();
 }
 
 // Todo: create a function to handle adding a new task
