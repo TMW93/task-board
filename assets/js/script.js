@@ -2,9 +2,9 @@ const taskFormEl = $(`#task-form`);
 const taskTitleInputEl = $(`#task-title`);
 const dateInputEl = $(`#task-due-date`);
 const taskDescriptInputEl = $(`#task-descript`);
-const cardEl = $(`#to-do-cards`);
-const inProgCard = $(`#in-progress-cards`);
-const doneCard = $(`#done-cards`);
+const toDoEl = $(`#todo-cards`);
+const inProgEl = $(`#in-progress-cards`);
+const doneEl = $(`#done-cards`);
 
 // Retrieve tasks and nextId from localStorage
 let taskList = JSON.parse(localStorage.getItem("tasks"));
@@ -22,35 +22,40 @@ function generateTaskId() {
 
 // Todo: create a function to create a task card
 function createTaskCard(task) {
-  // make a card to appear on webpage
-  // cardEl.addClass(`card`);
-  // let cardBodyEl = $(`<div>`);
-  // cardBodyEl.addClass(`card-body`);
-  // cardBodyEl.appendTo(cardEl);
+  let cardEl = $(`<div>`);
+  cardEl.addClass(`card`);
+  cardEl.appendTo(toDoEl);
+  
+  let cardBodyEl = $(`<div>`);
+  cardBodyEl.addClass(`card-body`);
+  cardBodyEl.appendTo(cardEl);
 
-  // let cardHeaderEl = $(`<h5>`);
-  // cardHeaderEl.addClass(`card-title`);
-  // cardHeaderEl.text(currentTask.taskTitle);
-  // cardHeaderEl.appendTo(cardBodyEl);
+  let cardHeaderEl = $(`<h5>`);
+  cardHeaderEl.addClass(`card-title`);
+  cardHeaderEl.text(task.taskTitle);
+  cardHeaderEl.appendTo(cardBodyEl);
 
-  // let cardTextEl = $(`<p>`);
-  // cardTextEl.addClass(`card-text`);
-  // cardTextEl.text(currentTask.taskDescript);
-  // cardTextEl.appendTo(cardBodyEl);
+  let cardTextEl = $(`<p>`);
+  cardTextEl.addClass(`card-text`);
+  cardTextEl.text(task.taskDescript);
+  cardTextEl.appendTo(cardBodyEl);
 
-  // let cardDateEl = $(`<p>`);
-  // cardDateEl.addClass(`card-text`);
-  // cardDateEl.text(currentTask.taskDueDate);
-  // cardDateEl.appendTo(cardBodyEl);
+  let cardDateEl = $(`<p>`);
+  cardDateEl.addClass(`card-text`);
+  cardDateEl.text(task.taskDueDate);
+  cardDateEl.appendTo(cardBodyEl);
 
-  // let cardDelete = $(`<btn>`);
-  // cardDelete.text(`Delete`);
-  // cardDelete.appendTo(cardBodyEl);
+  let cardDelete = $(`<button>`);
+  cardDelete.text(`Delete`);
+  cardDelete.appendTo(cardBodyEl);
 }
 
 // Todo: create a function to render the task list and make cards draggable
 function renderTaskList() {
   let currentList = taskList;
+  for(task in currentList) {
+    createTaskCard(task);
+  }
 }
 
 // Todo: create a function to handle adding a new task
@@ -70,8 +75,14 @@ function handleAddTask(event){
     // push recently input task to tasklist array and store in local storage
     taskList.push(currentTask);
     localStorage.setItem(`tasks`, JSON.stringify(taskList));
-
+    //hide form after submit
     $(`#formModal`).modal(`hide`);
+    //reset inputs after submit
+    $(`#formModal`).on('hidden.bs.modal', function () {
+      taskFormEl.trigger(`reset`);
+    })
+    //create a card for task
+    createTaskCard(currentTask);
   }
 }
 
