@@ -52,19 +52,21 @@ function createTaskCard(task) {
   let cardDelete = $(`<button>`);
   cardDelete.text(`Delete`);
   cardDelete.appendTo(cardBodyEl);
-
-  $(`.task-card`).draggable({
-    snap: `#todo-cards, #in-progress-cards, #done-cards`,
-    stack: `.task-card`
-  });
 }
 
 // Todo: create a function to render the task list and make cards draggable
 function renderTaskList() {
+  //create cards
   let currentList = taskList;
   for(task in currentList) {
-    createTaskCard(task);
+    createTaskCard(currentList[task]);
   }
+
+  //make cards draggable
+  $(`.task-card`).draggable({
+    snap: `#todo-cards, #in-progress-cards, #done-cards`,
+    stack: `.task-card`
+  });
 }
 
 // Todo: create a function to handle adding a new task
@@ -127,9 +129,12 @@ $(document).ready(function () {
     changeYear: true
   });
 
+  //render task list
+  renderTaskList();
+
   // make lanes droppable
   handleDrop();
-  
+
   // event listener for the add task button
   taskFormEl.on(`submit`, handleAddTask);
 });
