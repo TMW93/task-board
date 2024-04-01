@@ -16,8 +16,6 @@ let nextId = JSON.parse(localStorage.getItem("nextId"));
 // get current date
 let today = dayjs();
 
-
-
 // Todo: create a function to generate a unique task id
 function generateTaskId() {
 
