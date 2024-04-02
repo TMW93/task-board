@@ -21,7 +21,6 @@ let today = dayjs();
 
 // Todo: create a function to generate a unique task id
 function generateTaskId() {
-
 }
 
 // Todo: create a function to create a task card
@@ -50,6 +49,7 @@ function createTaskCard(task) {
   cardDateEl.appendTo(cardBodyEl);
 
   let cardDelete = $(`<button>`);
+  cardDelete.addClass(`delete-button`);
   cardDelete.text(`Delete`);
   cardDelete.appendTo(cardBodyEl);
 }
@@ -99,7 +99,12 @@ function handleAddTask(event){
 
 // Todo: create a function to handle deleting a task
 function handleDeleteTask(event){
+  //remove the button's parent - the card
+  $(this).parent().remove();
 
+  //get the clicked button's index in thhe taskList array (not working)
+  let index = $(this).index();
+  console.log(`this is the elements index: ${index}`);
 }
 
 // Todo: create a function to handle dropping a task into a new status lane
@@ -134,6 +139,9 @@ $(document).ready(function () {
 
   // make lanes droppable
   handleDrop();
+
+  //make delete button work
+  $(`.delete-button`).on(`click`, handleDeleteTask);
 
   // event listener for the add task button
   taskFormEl.on(`submit`, handleAddTask);
