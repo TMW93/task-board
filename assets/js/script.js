@@ -19,6 +19,9 @@ if(taskList === null) {
   taskList = [];
 }
 let nextId = JSON.parse(localStorage.getItem("nextId"));
+if(nextId === null) {
+  nextId = [];
+}
 
 // get current date
 let today = dayjs();
@@ -30,12 +33,24 @@ function generateTaskId() {
   return taskId;
 }
 
+//saving the task ids to local storage
+function saveIds(taskIds) {
+  localStorage.setItem(`taskIds`, JSON.stringify(taskIds));
+}
+
+//saving tasklist to local storage
+function saveTaskList(tasklist) {
+  localStorage.setItem(`tasks`, JSON.stringify(tasklist));
+}
+
 // Todo: create a function to create a task card
 function createTaskCard(task) {
   let cardEl = $(`<div>`);
   cardEl.addClass(`card task-card`);
   cardEl.appendTo(toDoEl);
   cardEl.id = generateTaskId();
+  nextId.push(cardEl.id);
+  saveIds(nextId);
   // console.log(`This card's id is`, cardEl.id);
   
   let cardBodyEl = $(`<div>`);
@@ -96,10 +111,9 @@ function handleAddTask(event){
     $(`#formModal`).modal(`hide`);
     return;
   } else {
-    console.log()
     // push recently input task to tasklist array and store in local storage
     taskList.push(currentTask);
-    localStorage.setItem(`tasks`, JSON.stringify(taskList));
+    saveTaskList(taskList);
     //hide form after submit
     $(`#formModal`).modal(`hide`);
     //reset inputs after submit
