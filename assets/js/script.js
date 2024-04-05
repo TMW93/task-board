@@ -8,6 +8,10 @@ const doneEl = $(`#done-cards`);
 const toDoBox = $(`#to-do`);
 const inProgBox = $(`#in-progress`);
 const doneBox = $(`#done`);
+const cardBody = $(`.card-body`);
+
+//task counter that updates with new tasks
+let taskCount = 0;
 
 // Retrieve tasks and nextId from localStorage
 let taskList = JSON.parse(localStorage.getItem("tasks"));
@@ -21,6 +25,9 @@ let today = dayjs();
 
 // Todo: create a function to generate a unique task id
 function generateTaskId() {
+  let taskId = `task` + taskCount;
+  taskCount++;
+  return taskId;
 }
 
 // Todo: create a function to create a task card
@@ -28,6 +35,8 @@ function createTaskCard(task) {
   let cardEl = $(`<div>`);
   cardEl.addClass(`card task-card`);
   cardEl.appendTo(toDoEl);
+  cardEl.id = generateTaskId();
+  // console.log(`This card's id is`, cardEl.id);
   
   let cardBodyEl = $(`<div>`);
   cardBodyEl.addClass(`card-body`);
@@ -57,16 +66,21 @@ function createTaskCard(task) {
 // Todo: create a function to render the task list and make cards draggable
 function renderTaskList() {
   //create cards
-  let currentList = taskList;
-  for(task in currentList) {
-    createTaskCard(currentList[task]);
+  for(task in taskList) {
+    createTaskCard(taskList[task]);
   }
 
   //make cards draggable
   $(`.task-card`).draggable({
+    snap: true,
     snap: `#todo-cards, #in-progress-cards, #done-cards`,
-    stack: `.task-card`
+    snapMode: `inner`,
+    stack: `.task-card`,
+    helper: `original`,
   });
+
+  // event.dataTransfer.setData(`text`, event.target.id);
+  // event.dataTransfer.effectAllowed = `move`;
 }
 
 // Todo: create a function to handle adding a new task
@@ -109,21 +123,11 @@ function handleDeleteTask(event){
 
 // Todo: create a function to handle dropping a task into a new status lane
 function handleDrop(event, ui) {
-  toDoEl.droppable({
-    drop: function(e, ui) {
-      $(ui.draggable).appendTo(toDoEl);
-    }
-  });
-  inProgEl.droppable({
-    drop: function(e, ui) {
-      $(ui.draggable).appendTo(inProgEl);
-    }
-  });
-  doneEl.droppable({
-    drop: function(e, ui) {
-      $(ui.draggable).appendTo(doneEl);
-    }
-  });
+  event.preventDefault();
+
+  //get id of dragged element and add it to the corresponding div
+  // let data = event.dataTransfer.getData(`text`);
+  // event.target.appendChild(document.getElementById(data));
 }
 
 // Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
@@ -138,7 +142,7 @@ $(document).ready(function () {
   renderTaskList();
 
   // make lanes droppable
-  handleDrop();
+  // handleDrop();
 
   //make delete button work
   $(`.delete-button`).on(`click`, handleDeleteTask);
