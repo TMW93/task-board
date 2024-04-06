@@ -14,3 +14,8 @@ body {
 .task-card:hover {
   cursor: grab;
 }
+
+
+.card-body.dragover {
+  background-color: purple;
+}
