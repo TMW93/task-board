@@ -9,11 +9,12 @@ const cardBody = $(`.card-body`);
 const cardBodyElOne = document.querySelectorAll(`.card-body`)[0];
 const cardBodyElTwo = document.querySelectorAll(`.card-body`)[1];
 const cardBodyElThree = document.querySelectorAll(`.card-body`)[2];
-//task counter that updates with new tasks
-let taskCount = 0;
 
-//dragged element
-let draggedEl = null;
+//task counter that updates with new tasks
+let taskCount = JSON.parse(localStorage.getItem(`task-count`));
+if(taskCount === null) {
+  taskCount = 0;
+}
 
 // Retrieve tasks and nextId from localStorage
 let taskList = JSON.parse(localStorage.getItem("tasks"));
@@ -28,11 +29,17 @@ if(nextId === null) {
 // get current date
 let today = dayjs();
 
+//saving task counter to local storage
+function saveTaskCount(counter) {
+  localStorage.setItem(`task-count`, JSON.stringify(counter))
+}
+
 // Todo: create a function to generate a unique task id
 function generateTaskId() {
   let taskId = `task` + taskCount;
   taskCount++;
   // console.log(taskCount);
+  saveTaskCount(taskCount);
   return taskId;
 }
 
@@ -113,14 +120,6 @@ function renderTaskList() {
     start: function(event, ui) {
     }
   });
-  
-  // taskCard.attr(`draggable`, true);
-  // taskCard.on(`dragstart`, function(event) {
-  //   draggableEl = event.target;   
-  // });
-  // cardBody.on(`dragover`, function(event) {
-  //   event.preventDefault();
-  // });
 }
 
 // Todo: create a function to handle adding a new task
@@ -150,18 +149,25 @@ function handleAddTask(event){
       taskFormEl.trigger(`reset`);
     })
     //create cards
+    location.reload();
     renderTaskList();
   }
 }
 
 // Todo: create a function to handle deleting a task
 function handleDeleteTask(event){
-  //remove the button's parent - the card
-  $(this).parent().remove();
+  console.log(event.target.parentNode.parentNode.id);
+  //grab the id of the task card
+  let taskId = event.target.parentNode.parentNode.id;
 
-  //get the clicked button's index in thhe taskList array (not working)
-  let index = $(this).index();
-  console.log(`this is the elements index: ${index}`);
+  for(let i = 0; i < taskList.length; i++) {
+    if(taskList[i].id === taskId) {
+      console.log(`task found`);
+    }
+  }
+
+  //remove the button's parent - the card
+  // $(this).parent().remove();
 }
 
 // Todo: create a function to handle dropping a task into a new status lane
@@ -170,7 +176,7 @@ function handleDrop() {
   // console.log(ui);
   cardBody.droppable({
     drop: function(event, ui) {
-      draggedEl = ui.draggable;
+      let draggedEl = ui.draggable;
       // console.log(draggedEl[0].id);
       let draggedID = draggedEl[0].id;
       // let draggedParentID = draggedEl.parent().attr.id;
