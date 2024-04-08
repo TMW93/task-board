@@ -20,19 +20,19 @@ body {
 }
 
 .task-card button {
-  background-color: red;
+  background-color: rgb(220, 0, 0);
   color: white;
   border-color: red;
   font-weight: bold;
 }
 
 .task-card.overdue {
-  background-color: rgb(187, 29, 29);
+  background-color: rgb(206, 67, 67);
   color: black;
 }
 
 .task-card.overdue h5 {
-  background-color: rgb(141, 32, 32);
+  background-color: rgb(235, 41, 41);
 }
 
 .task-card.nearing {
