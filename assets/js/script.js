@@ -156,18 +156,35 @@ function handleAddTask(event){
 
 // Todo: create a function to handle deleting a task
 function handleDeleteTask(event){
-  console.log(event.target.parentNode.parentNode.id);
+  let foundTaskIndex = null;
+  let foundIdIndex = null;
   //grab the id of the task card
   let taskId = event.target.parentNode.parentNode.id;
 
   for(let i = 0; i < taskList.length; i++) {
     if(taskList[i].id === taskId) {
-      console.log(`task found`);
+      foundTaskIndex = i;
+      console.log(foundTaskIndex);
+    }
+  }
+
+  for(let j = 0; j < nextId.length; j++) {
+    if(nextId[j] === taskId) {
+      foundIdIndex = j;
+      console.log(foundIdIndex);
     }
   }
 
   //remove the button's parent - the card
-  // $(this).parent().remove();
+  $(this).parent().remove();
+
+  //remove the task from storage
+  taskList.splice(foundTaskIndex, 1);
+  saveTaskList(taskList);
+
+  //remove the id from storage
+  nextId.splice(foundIdIndex, 1);
+  saveIds(nextId);
 }
 
 // Todo: create a function to handle dropping a task into a new status lane
