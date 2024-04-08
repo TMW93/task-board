@@ -13,7 +13,7 @@ const cardBodyElThree = document.querySelectorAll(`.card-body`)[2];
 let taskCount = 0;
 
 //dragged element
-// let draggedEl = null;
+let draggedEl = null;
 
 // Retrieve tasks and nextId from localStorage
 let taskList = JSON.parse(localStorage.getItem("tasks"));
@@ -64,10 +64,13 @@ function createTaskCard(task) {
       let cardEl = $(`<div>`);
       cardEl.addClass(`card task-card`);
       cardEl.appendTo(columnChild);
-      cardEl.id = task.id;
+      // cardEl.id = task.id;
+      let cardId = task.id;
+      cardEl.attr(`id`, cardId);
+      // console.log(task.id);
       
       let cardBodyEl = $(`<div>`);
-      cardBodyEl.addClass(`card-body`);
+      cardBodyEl.addClass(`task-body`);
       cardBodyEl.appendTo(cardEl);
     
       let cardHeaderEl = $(`<h5>`);
@@ -103,17 +106,22 @@ function renderTaskList() {
 
   //make cards draggable
   let taskCard = $(`.task-card`);
-  taskCard.attr(`draggable`, true);
-  taskCard.on(`dragstart`, function(event) {
-    draggableEl = event.target;
-    console.log(event.target);
-    // event.dataTransfer.setData(`text`, event.target.id);
-    
+
+  taskCard.draggable({
+    stack: cardBody,
+    start: function(event, ui) {
+      draggedEl = ui.draggable;
+      console.log(draggedEl);
+    }
   });
-  cardBody.on(`dragover`, function(event) {
-    event.preventDefault();
-    // console.log(`dragover working`);
-  });
+  
+  // taskCard.attr(`draggable`, true);
+  // taskCard.on(`dragstart`, function(event) {
+  //   draggableEl = event.target;   
+  // });
+  // cardBody.on(`dragover`, function(event) {
+  //   event.preventDefault();
+  // });
 }
 
 // Todo: create a function to handle adding a new task
@@ -158,19 +166,28 @@ function handleDeleteTask(event){
 }
 
 // Todo: create a function to handle dropping a task into a new status lane
-function handleDrop(event, ui) {
-  event.preventDefault();
-
-  let data = event.dataTransfer.getData(`text/plain`);
-  let draggedEl = document.getElementById(data);
-  console.log(draggedEl);
-
-  // if(event.target.className === `card-body bg-light`) {
-  //   console.log(event.target.childNodes);
-  //   console.log(draggedEl);
-  //   draggedEl.parentNode.removeChild(draggedEl);
-  //   event.target.childNodes[1].appendChild(draggedEl);
-  // }
+function handleDrop() {
+  // console.log($(this));
+  // console.log(ui);
+  cardBody.droppable({
+    drop: function(event, ui) {
+      console.log(`its dropped`);
+      // console.log(this.childNodes);
+      if(this.childNodes[1].id === `todo-cards`) {
+        console.log(`its in to do`);
+      } else if(this.childNodes[1].id === `in-progress-cards`) {
+        console.log(`its in progress`);
+      } else if(this.childNodes[1].id === `done-cards`) {
+        console.log(`its done`);
+      } 
+    },
+    over: function(event, ui) {
+      // console.log(`its working`);
+      // console.log(this);
+    }
+  });
+  // draggedEl.parentNode.removeChild(draggedEl);
+  // event.target.childNodes[1].appendChild(draggedEl);
 }
 
 function dragOverEff() {
@@ -227,6 +244,7 @@ $(document).ready(function () {
     changeMonth: true,
     changeYear: true
   });
+
   // console.log(taskList);
   // testF();
 
@@ -237,7 +255,15 @@ $(document).ready(function () {
 
 
   // make lanes droppable
-  // cardBody.on(`drop`, handleDrop);
+  handleDrop();
+
+  // cardBodyElTwo.droppable({
+  //   drop: handleDrop(event, inProgEl)
+  // });
+
+  // cardBodyElThree.droppable({
+  //   drop: handleDrop(event, doneEl)
+  // });
 
   //make delete button work
   $(`.delete-button`).on(`click`, handleDeleteTask);
