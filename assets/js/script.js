@@ -75,7 +75,6 @@ function createTaskCard(task) {
       // cardEl.id = task.id;
       let cardId = task.id;
       cardEl.attr(`id`, cardId);
-      // console.log(task.id);
       
       let cardBodyEl = $(`<div>`);
       cardBodyEl.addClass(`task-body`);
@@ -101,28 +100,29 @@ function createTaskCard(task) {
       cardDelete.text(`Delete`);
       cardDelete.appendTo(cardBodyEl);
 
-      //colouring card if needed
+      //colouring card if based on date
       let dueDate = task.taskDueDate;
       let date = dayjs(dueDate)
       let dayDiff = date.diff(today, `day`);
-      console.log(dayDiff);
       if(date.isBefore(today)) {
-        console.log(`is before`);
         cardEl.addClass(`overdue`);
       }
-  
+      
+      //if date is within 5 days set to colour scheme to nearing
       if(date.isAfter(today)) {
         if(dayDiff < 5) {
-          console.log(`uh-oh`);
           cardEl.addClass(`nearing`);
-        } else {
-          console.log(`is after`);
         }
       }
-  
+      
+      //if date is past due date set colour scheme to overdue
       if(date.isSame(today)) {
-        console.log(`is same`);
         cardEl.addClass(`overdue`);
+      }
+
+      //colouring if placed into done column
+      if(task.taskStatus === `done`) {
+        cardEl.addClass(`task-done`);
       }
     }
   }
@@ -139,7 +139,9 @@ function renderTaskList() {
   let taskCard = $(`.task-card`);
 
   taskCard.draggable({
-    stack: cardBody,
+    stack: taskCard,
+    snap: cardBody,
+    snapMode: `inner`,
     start: function(event, ui) {
     }
   });
@@ -215,122 +217,50 @@ function handleDeleteTask(event){
 
 // Todo: create a function to handle dropping a task into a new status lane
 function handleDrop() {
-  // console.log($(this));
-  // console.log(ui);
   cardBody.droppable({
     drop: function(event, ui) {
+      //grabs the dragged element
       let draggedEl = ui.draggable;
-      // console.log(draggedEl[0].id);
+      //grabs the dragged elements id
       let draggedID = draggedEl[0].id;
-      // let draggedParentID = draggedEl.parent().attr.id;
-      // console.log(draggedEl.parent().attr(`id`));
-      // console.log(draggedEl[0].parentNode);
-      // console.log(`its dropped`);
-      // console.log(this.childNodes);
+
+      //if dropped in column
       if(this.childNodes[1].id === `todo-cards`) {
-        // // console.log(`its in to do`);
         // draggedEl[0].parentNode.removeChild(draggedEl);
+        //find the dragged elements corresponding task object in taskList and change its status to the dropped cloumn
         for(let i = 0; i < taskList.length; i++) {
           if(taskList[i].id === draggedID) {
-            // console.log(`found task`);
-            // console.log(taskList[i].id);
             taskList[i].taskStatus = `to-do`; 
-            // console.log(taskList[i].taskStatus);
             saveTaskList(taskList);
           }
         }
+        //append dragged element to the column
         draggedEl.appendTo(this);
       } else if(this.childNodes[1].id === `in-progress-cards`) {
-        // console.log(`its in progress`);
         // draggedEl[0].parentNode.removeChild(draggedEl);
         for(let i = 0; i < taskList.length; i++) {
           if(taskList[i].id === draggedID) {
-            // console.log(`found task`);
-            // console.log(taskList[i].id);
             taskList[i].taskStatus = `in-progress`; 
-            // console.log(taskList[i].taskStatus);
             saveTaskList(taskList);
           }
         }
         draggedEl.appendTo(this);
       } else if(this.childNodes[1].id === `done-cards`) {
-        // console.log(`its done`);
         // draggedEl[0].parentNode.removeChild(draggedEl);
         for(let i = 0; i < taskList.length; i++) {
           if(taskList[i].id === draggedID) {
-            // console.log(`found task`);
-            // console.log(taskList[i].id);
             taskList[i].taskStatus = `done`; 
-            // console.log(taskList[i].taskStatus);
             saveTaskList(taskList);
           }
         }
         draggedEl.appendTo(this);
+        // console.log(this.className);
+        // this.addClass(`task-done`);
       } 
     },
     over: function(event, ui) {
-      // console.log(`its working`);
-      // console.log(this);
     }
   });
-  // draggedEl.parentNode.removeChild(draggedEl);
-  // event.target.childNodes[1].appendChild(draggedEl);
-}
-
-function dragOverEff() {
-  console.log(cardBodyElOne.className);
-  if(cardBodyElOne.className === `card-body bg-light`){
-    console.log(`it works`);
-  } else {
-    console.log(`no work`);
-  }
-  console.log(cardBodyElOne.childNodes);
-  console.log(cardBodyElOne.childNodes[1].id);
-
-  console.log(cardBodyElTwo.childNodes);
-  console.log(cardBodyElTwo.childNodes[1].id);
-
-  console.log(cardBodyElThree.childNodes);
-  console.log(cardBodyElThree.childNodes[1].id);
-
-  cardBody.on(`dragenter`, function(event) {
-    if(event.target.classList.contains(`card-body`)) {
-      event.target.classList.add(`dragover`);
-    }
-  });
-  
-  cardBody.on(`dragleave`, function(event) {
-    if(event.target.classList.contains(`card-body`)) {
-      event.target.classList.remove(`dragover`);
-    }
-  });
-}
-
-function testF() {
-  let taskCard = $(`.task-card`);
-  for(let i = 0; i< taskList.length; i++) {
-    let dueDate = taskList[i].taskDueDate;
-    let date = dayjs(dueDate)
-    let dayDiff = date.diff(today, `day`);
-    console.log(dayDiff);
-    if(date.isBefore(today)) {
-      console.log(`is before`);
-    }
-
-    if(date.isAfter(today)) {
-      if(dayDiff < 5) {
-        console.log(`uh-oh`);
-        // taskCard.attr(`class`, `nearing`)
-      } else {
-        console.log(`is after`);
-      }
-    }
-
-    if(date.isSame(today)) {
-      console.log(`is same`);
-    }
-  }
-  // console.log(today);
 }
 
 // Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
@@ -343,8 +273,6 @@ $(document).ready(function () {
 
   //render task list
   renderTaskList();
-
-  // testF();
 
   // make lanes droppable
   handleDrop();

@@ -31,3 +31,7 @@ body {
   background-color: rgb(250, 205, 3);
   color: black;
 }
+
+.task-card.task-done {
+  background-color: green;
+}
