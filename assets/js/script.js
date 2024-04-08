@@ -32,12 +32,13 @@ let today = dayjs();
 function generateTaskId() {
   let taskId = `task` + taskCount;
   taskCount++;
+  // console.log(taskCount);
   return taskId;
 }
 
 //saving the task ids to local storage
 function saveIds(taskIds) {
-  localStorage.setItem(`taskIds`, JSON.stringify(taskIds));
+  localStorage.setItem(`nextId`, JSON.stringify(taskIds));
 }
 
 //saving tasklist to local storage
@@ -62,7 +63,7 @@ function createTaskCard(task) {
       let columnChild = column.children[1].children;
 
       let cardEl = $(`<div>`);
-      cardEl.addClass(`card task-card`);
+      cardEl.addClass(`card task-card p-3`);
       cardEl.appendTo(columnChild);
       // cardEl.id = task.id;
       let cardId = task.id;
@@ -110,8 +111,6 @@ function renderTaskList() {
   taskCard.draggable({
     stack: cardBody,
     start: function(event, ui) {
-      draggedEl = ui.draggable;
-      console.log(draggedEl);
     }
   });
   
@@ -150,8 +149,8 @@ function handleAddTask(event){
     $(`#formModal`).on('hidden.bs.modal', function () {
       taskFormEl.trigger(`reset`);
     })
-    //create a card for task
-    createTaskCard(currentTask);
+    //create cards
+    renderTaskList();
   }
 }
 
@@ -171,14 +170,53 @@ function handleDrop() {
   // console.log(ui);
   cardBody.droppable({
     drop: function(event, ui) {
-      console.log(`its dropped`);
+      draggedEl = ui.draggable;
+      // console.log(draggedEl[0].id);
+      let draggedID = draggedEl[0].id;
+      // let draggedParentID = draggedEl.parent().attr.id;
+      // console.log(draggedEl.parent().attr(`id`));
+      // console.log(draggedEl[0].parentNode);
+      // console.log(`its dropped`);
       // console.log(this.childNodes);
       if(this.childNodes[1].id === `todo-cards`) {
-        console.log(`its in to do`);
+        // // console.log(`its in to do`);
+        // draggedEl[0].parentNode.removeChild(draggedEl);
+        for(let i = 0; i < taskList.length; i++) {
+          if(taskList[i].id === draggedID) {
+            // console.log(`found task`);
+            // console.log(taskList[i].id);
+            taskList[i].taskStatus = `to-do`; 
+            // console.log(taskList[i].taskStatus);
+            saveTaskList(taskList);
+          }
+        }
+        draggedEl.appendTo(this);
       } else if(this.childNodes[1].id === `in-progress-cards`) {
-        console.log(`its in progress`);
+        // console.log(`its in progress`);
+        // draggedEl[0].parentNode.removeChild(draggedEl);
+        for(let i = 0; i < taskList.length; i++) {
+          if(taskList[i].id === draggedID) {
+            // console.log(`found task`);
+            // console.log(taskList[i].id);
+            taskList[i].taskStatus = `in-progress`; 
+            // console.log(taskList[i].taskStatus);
+            saveTaskList(taskList);
+          }
+        }
+        draggedEl.appendTo(this);
       } else if(this.childNodes[1].id === `done-cards`) {
-        console.log(`its done`);
+        // console.log(`its done`);
+        // draggedEl[0].parentNode.removeChild(draggedEl);
+        for(let i = 0; i < taskList.length; i++) {
+          if(taskList[i].id === draggedID) {
+            // console.log(`found task`);
+            // console.log(taskList[i].id);
+            taskList[i].taskStatus = `done`; 
+            // console.log(taskList[i].taskStatus);
+            saveTaskList(taskList);
+          }
+        }
+        draggedEl.appendTo(this);
       } 
     },
     over: function(event, ui) {
@@ -246,6 +284,7 @@ $(document).ready(function () {
   });
 
   // console.log(taskList);
+  // console.log(nextId);
   // testF();
 
   //render task list
