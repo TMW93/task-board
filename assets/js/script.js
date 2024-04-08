@@ -6,9 +6,6 @@ const toDoEl = $(`#todo-cards`);
 const inProgEl = $(`#in-progress-cards`);
 const doneEl = $(`#done-cards`);
 const cardBody = $(`.card-body`);
-const cardBodyElOne = document.querySelectorAll(`.card-body`)[0];
-const cardBodyElTwo = document.querySelectorAll(`.card-body`)[1];
-const cardBodyElThree = document.querySelectorAll(`.card-body`)[2];
 
 //task counter that updates with new tasks
 let taskCount = JSON.parse(localStorage.getItem(`task-count`));
@@ -63,14 +60,13 @@ function createTaskCard(task) {
 
   for(let i = 0; i < columns.length; i++) {
     let column = document.getElementById(columns[i]);
-    // console.log(task.taskStatus);
 
     if(task.taskStatus === columns[i]) {
       //get to the cards div
       let columnChild = column.children[1].children;
 
       let cardEl = $(`<div>`);
-      cardEl.addClass(`card task-card p-3`);
+      cardEl.addClass(`card task-card pt-0 pb=2 mt-0 mb-2`);
       cardEl.appendTo(columnChild);
       // cardEl.id = task.id;
       let cardId = task.id;
@@ -81,7 +77,7 @@ function createTaskCard(task) {
       cardBodyEl.appendTo(cardEl);
     
       let cardHeaderEl = $(`<h5>`);
-      cardHeaderEl.addClass(`card-title`);
+      cardHeaderEl.addClass(`card-title mw-100 p-3`);
       cardHeaderEl.text(task.taskTitle);
       cardHeaderEl.appendTo(cardBodyEl);
     
@@ -96,7 +92,7 @@ function createTaskCard(task) {
       cardDateEl.appendTo(cardBodyEl);
     
       let cardDelete = $(`<button>`);
-      cardDelete.addClass(`delete-button`);
+      cardDelete.addClass(`delete-button mb-3`);
       cardDelete.text(`Delete`);
       cardDelete.appendTo(cardBodyEl);
 
@@ -140,7 +136,10 @@ function renderTaskList() {
 
   taskCard.draggable({
     stack: taskCard,
-    snap: cardBody,
+    grid: [20, 20],
+    // snap: toDoEl,
+    // snap: inProgEl,
+    // snap: doneEl,
     snapMode: `inner`,
     start: function(event, ui) {
     }
@@ -223,39 +222,45 @@ function handleDrop() {
       let draggedEl = ui.draggable;
       //grabs the dragged elements id
       let draggedID = draggedEl[0].id;
-
       //if dropped in column
       if(this.childNodes[1].id === `todo-cards`) {
         // draggedEl[0].parentNode.removeChild(draggedEl);
         //find the dragged elements corresponding task object in taskList and change its status to the dropped cloumn
         for(let i = 0; i < taskList.length; i++) {
           if(taskList[i].id === draggedID) {
+            //removing the done colour scheme if card was in done column prior
+            if(taskList[i].taskStatus === `done`) {
+              $(ui.draggable).removeClass(`task-done`);
+            }
             taskList[i].taskStatus = `to-do`; 
             saveTaskList(taskList);
+            // draggedEl.appendTo(this.childNodes[1]);
           }
         }
         //append dragged element to the column
-        draggedEl.appendTo(this);
       } else if(this.childNodes[1].id === `in-progress-cards`) {
         // draggedEl[0].parentNode.removeChild(draggedEl);
         for(let i = 0; i < taskList.length; i++) {
           if(taskList[i].id === draggedID) {
+            if(taskList[i].taskStatus === `done`) {
+              $(ui.draggable).removeClass(`task-done`);
+            }
             taskList[i].taskStatus = `in-progress`; 
             saveTaskList(taskList);
+            // draggedEl.appendTo(this.childNodes[1]);
           }
         }
-        draggedEl.appendTo(this);
       } else if(this.childNodes[1].id === `done-cards`) {
         // draggedEl[0].parentNode.removeChild(draggedEl);
         for(let i = 0; i < taskList.length; i++) {
           if(taskList[i].id === draggedID) {
-            taskList[i].taskStatus = `done`; 
+            taskList[i].taskStatus = `done`;
+            //make draggable green like in demo
+            $(ui.draggable).addClass(`task-done`);
             saveTaskList(taskList);
+            // draggedEl.appendTo(this.childNodes[1]);
           }
         }
-        draggedEl.appendTo(this);
-        // console.log(this.className);
-        // this.addClass(`task-done`);
       } 
     },
     over: function(event, ui) {

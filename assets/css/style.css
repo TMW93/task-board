@@ -11,6 +11,10 @@ body {
   margin: 0 auto;
 }
 
+.task-card h5 {
+  background-color: rgba(181, 180, 180, 0.955);
+}
+
 .task-card:hover {
   cursor: grab;
 }
@@ -27,11 +31,23 @@ body {
   color: black;
 }
 
+.task-card.overdue h5 {
+  background-color: rgb(141, 32, 32);
+}
+
 .task-card.nearing {
   background-color: rgb(250, 205, 3);
   color: black;
 }
 
+.task-card.nearing h5 {
+  background-color: rgb(213, 185, 60);
+}
+
 .task-card.task-done {
+  background-color: rgb(17, 193, 17);
+}
+
+.task-card.task-done h5 {
   background-color: green;
 }
