@@ -15,7 +15,19 @@ body {
   cursor: grab;
 }
 
+.task-card button {
+  background-color: red;
+  color: white;
+  border-color: red;
+  font-weight: bold;
+}
 
-.card-body.dragover {
-  background-color: purple;
+.task-card.overdue {
+  background-color: rgb(187, 29, 29);
+  color: black;
+}
+
+.task-card.nearing {
+  background-color: rgb(250, 205, 3);
+  color: black;
 }

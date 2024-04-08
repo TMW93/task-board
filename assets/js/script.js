@@ -100,13 +100,36 @@ function createTaskCard(task) {
       cardDelete.addClass(`delete-button`);
       cardDelete.text(`Delete`);
       cardDelete.appendTo(cardBodyEl);
+
+      //colouring card if needed
+      let dueDate = task.taskDueDate;
+      let date = dayjs(dueDate)
+      let dayDiff = date.diff(today, `day`);
+      console.log(dayDiff);
+      if(date.isBefore(today)) {
+        console.log(`is before`);
+        cardEl.addClass(`overdue`);
+      }
+  
+      if(date.isAfter(today)) {
+        if(dayDiff < 5) {
+          console.log(`uh-oh`);
+          cardEl.addClass(`nearing`);
+        } else {
+          console.log(`is after`);
+        }
+      }
+  
+      if(date.isSame(today)) {
+        console.log(`is same`);
+        cardEl.addClass(`overdue`);
+      }
     }
   }
 }
 
 // Todo: create a function to render the task list and make cards draggable
 function renderTaskList() {
-
   //create cards
   for(task in taskList) {
     createTaskCard(taskList[task]);
@@ -149,6 +172,7 @@ function handleAddTask(event){
       taskFormEl.trigger(`reset`);
     })
     //create cards
+    //reload since rendertasklist creates a crad as well doubling the cards
     location.reload();
     renderTaskList();
   }
@@ -161,6 +185,7 @@ function handleDeleteTask(event){
   //grab the id of the task card
   let taskId = event.target.parentNode.parentNode.id;
 
+  //locate the corresponding task and grab the index
   for(let i = 0; i < taskList.length; i++) {
     if(taskList[i].id === taskId) {
       foundTaskIndex = i;
@@ -168,6 +193,7 @@ function handleDeleteTask(event){
     }
   }
 
+  //locate the corresponding id and grab the index
   for(let j = 0; j < nextId.length; j++) {
     if(nextId[j] === taskId) {
       foundIdIndex = j;
@@ -281,21 +307,30 @@ function dragOverEff() {
 }
 
 function testF() {
-  const columns = [
-    `to-do`,
-    `in-progress`,
-    `done`
-  ];
+  let taskCard = $(`.task-card`);
+  for(let i = 0; i< taskList.length; i++) {
+    let dueDate = taskList[i].taskDueDate;
+    let date = dayjs(dueDate)
+    let dayDiff = date.diff(today, `day`);
+    console.log(dayDiff);
+    if(date.isBefore(today)) {
+      console.log(`is before`);
+    }
 
-  for(let i = 0; i < taskList.length; i++) {
-    for(let j = 0; j < columns.length; j++) {
-      let column = document.getElementById(columns[j]);
-
-      if(taskList[i].taskStatus === columns[j]) {
-        console.log(`it matches!`);
+    if(date.isAfter(today)) {
+      if(dayDiff < 5) {
+        console.log(`uh-oh`);
+        // taskCard.attr(`class`, `nearing`)
+      } else {
+        console.log(`is after`);
       }
     }
+
+    if(date.isSame(today)) {
+      console.log(`is same`);
+    }
   }
+  // console.log(today);
 }
 
 // Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
@@ -306,26 +341,13 @@ $(document).ready(function () {
     changeYear: true
   });
 
-  // console.log(taskList);
-  // console.log(nextId);
-  // testF();
-
   //render task list
   renderTaskList();
 
-  // dragOverEff();
-
+  // testF();
 
   // make lanes droppable
   handleDrop();
-
-  // cardBodyElTwo.droppable({
-  //   drop: handleDrop(event, inProgEl)
-  // });
-
-  // cardBodyElThree.droppable({
-  //   drop: handleDrop(event, doneEl)
-  // });
 
   //make delete button work
   $(`.delete-button`).on(`click`, handleDeleteTask);
