@@ -202,14 +202,15 @@ function handleDeleteTask(event){
     }
   }
 
+  // console.log($(this).parent().parent());
   //remove the button's parent - the card
-  $(this).parent().remove();
+  $(this).parent().parent().remove();
 
   //remove the task from storage
   taskList.splice(foundTaskIndex, 1);
   saveTaskList(taskList);
 
-  //remove the id from storage
+  // remove the id from storage
   nextId.splice(foundIdIndex, 1);
   saveIds(nextId);
 }
